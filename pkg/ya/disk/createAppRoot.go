@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
-	"github.com/ark-go/yandexapi/pkg/appconf"
 )
 
 // вызывается из GetDiskInfo  и по другому не надо
@@ -23,7 +21,7 @@ func сreateAppRoot() error {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Add("Authorization", appconf.Conf.YaToken.AccessToken)
+	req.Header.Add("Authorization", *DiskConf.yaAccessToken)
 	resp, reserr := http.DefaultClient.Do(req)
 	if reserr != nil {
 		return reserr
@@ -40,8 +38,6 @@ func сreateAppRoot() error {
 		// case "DiskPathDoesntExistsError":
 		// 	log.Println("Указанного пути не существует")
 		// case "UnauthorizedError": // не происходит,
-		// 	appconf.Conf.YaToken.AccessToken = ""
-		// 	appconf.Conf.SaveConfig()
 		// 	log.Println("1)Нет авторизации, токен сброшен получите заново, перезагрузите программу")
 		// 	return fmt.Errorf("%s", v)
 		default:
@@ -55,7 +51,7 @@ func сreateAppRoot() error {
 
 	if v, ok := res["path"].(string); ok {
 		if v != "" {
-			DiskInfo.AppDirPath = v
+			DiskInfo.appRoot = v
 		} else {
 			return fmt.Errorf("не правильный каталог для приложения")
 		}

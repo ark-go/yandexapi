@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"github.com/ark-go/yandexapi/pkg/appconf"
 )
 
 func UploadByte(fileName string, buffer []byte) error {
@@ -29,10 +27,10 @@ func UploadFile(filePath string) error {
 }
 
 func uploadFile(filename string, file io.Reader) error {
-	if appconf.Conf.AppDirYandex == "" {
+	if DiskConf.appDirYandex == "" {
 		return fmt.Errorf("%s", "Не определен каталог приложения")
 	}
-	pathfile, err := GetUploadUrl(appconf.Conf.AppDirYandex + "/" + filename)
+	pathfile, err := getUploadUrl(DiskConf.appDirYandex + "/" + filename)
 	if err != nil {
 		return err
 	}
@@ -49,7 +47,7 @@ func uploadFile(filename string, file io.Reader) error {
 		return fmt.Errorf("сборка запроса не удалась: %s", err1.Error())
 	}
 	request.Header.Add("Content-Type", "binary/octet-stream")
-	request.Header.Add("Authorization", appconf.Conf.YaToken.AccessToken)
+	request.Header.Add("Authorization", *DiskConf.yaAccessToken)
 
 	resp, reserr := http.DefaultClient.Do(request)
 	if reserr != nil {

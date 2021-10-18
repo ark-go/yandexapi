@@ -5,15 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
-	"github.com/ark-go/yandexapi/pkg/appconf"
 )
 
 func getDownloadUrl(filename string) (urldown string, err error) {
-	if appconf.Conf.AppDirYandex == "" {
+	if DiskConf.appDirYandex == "" {
 		return "", fmt.Errorf("%s", "Не определен каталог приложения")
 	}
-	path := appconf.Conf.AppDirYandex + "/" + filename
+	path := DiskConf.appDirYandex + "/" + filename
 	baseUrl := "https://cloud-api.yandex.net/v1/disk/"
 	relativeUrl := "resources/download"
 	u, err := url.Parse(relativeUrl)
@@ -35,7 +33,7 @@ func getDownloadUrl(filename string) (urldown string, err error) {
 		log.Fatal(reqerr)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Add("Authorization", appconf.Conf.YaToken.AccessToken)
+	req.Header.Add("Authorization", *DiskConf.yaAccessToken)
 	resp, reserr := http.DefaultClient.Do(req)
 	if reserr != nil {
 		log.Fatal(reserr)

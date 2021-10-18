@@ -5,17 +5,18 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ark-go/yandexapi/pkg/ya/disk"
 	"github.com/ark-go/yandexapi/pkg/ya/oauth"
 	uuid "github.com/nu7hatch/gouuid"
 )
 
 type conf struct {
-	AppName        string
-	AppDirYandex   string // каталог на яндекс для нашего приложения
+	//	AppName        string
+	//	AppDirYandex   string // каталог на яндекс для нашего приложения
 	RootDir        string
-	DirOnlyApp     bool // ограничено только каталогом приложения
 	fileConfigPath string
 	YaToken        *oauth.SYaToken // это единственная связь с модулем oauth
+	Disk           *disk.SDiskConf
 }
 
 var Conf conf
@@ -27,13 +28,16 @@ func init() {
 
 	}
 	Conf = conf{
-		AppName:        "ANI Yandex Config",
 		fileConfigPath: filepath.Join(rootDir, "appconfig.cfg"),
 		YaToken:        oauth.YaToken,
-		DirOnlyApp:     true, // true - ограничено только каталогом приложения
+		Disk:           disk.DiskConf,
 	}
-	Conf.YaToken.SaveConfig = Conf.SaveConfig
+	Conf.YaToken.SaveConfig = Conf.SaveConfig // мы хотим сами (в oauth) сохранять конфиг при получении нового токена
 	Conf.YaToken.Scope = "Раз Два Три"
+	Conf.Disk.AppName = "ANI Yandex Config" // каталог будет создан в каталоге приложения (хз зачем) т.е. Disk:/Приложения/Имя приложения/этот каталог
+	Conf.Disk.DirOnlyApp = true             // true - ограничено только каталогом приложения, если при выдаче прав мы не разрешаем весь диск
+	// будет создан каталог по названию приложения которое указываем при получении API пароля на yandex.ru
+
 }
 
 func (c *conf) InitConfig() {

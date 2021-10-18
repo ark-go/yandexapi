@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
-	"github.com/ark-go/yandexapi/pkg/appconf"
 )
 
 type diskInfo struct {
@@ -17,7 +15,8 @@ type diskInfo struct {
 	Is_paid                      bool                   `json:"is_paid"`                      // false,
 	Used_space                   int                    `json:"used_space"`                   // 11424322597,
 	System_folders               map[string]interface{} `json:"system_folders"`
-	AppDirPath                   string
+	// каталог Приложения, в зависимости от языка
+	appRoot string
 }
 
 var DiskInfo *diskInfo
@@ -34,15 +33,13 @@ func GetDiskInfo() error {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Add("Authorization", appconf.Conf.YaToken.AccessToken)
+	req.Header.Add("Authorization", *DiskConf.yaAccessToken)
 	resp, reserr := http.DefaultClient.Do(req)
 	if reserr != nil {
 		return reserr
 	}
 	var res map[string]interface{}
-
 	json.NewDecoder(resp.Body).Decode(&DiskInfo)
-
 	resp.Body.Close()
 
 	if v, ok := res["error"]; ok {
@@ -52,8 +49,6 @@ func GetDiskInfo() error {
 		// case "DiskPathDoesntExistsError":
 		// 	log.Println("Указанного пути не существует")
 		// case "UnauthorizedError": // не происходит,
-		// 	appconf.Conf.YaToken.AccessToken = ""
-		// 	appconf.Conf.SaveConfig()
 		// 	log.Println("1)Нет авторизации, токен сброшен получите заново, перезагрузите программу")
 		// 	return fmt.Errorf("%s", v)
 		default:
@@ -64,19 +59,21 @@ func GetDiskInfo() error {
 		}
 		return fmt.Errorf("%s", v)
 	}
-
+	//log.Printf("diskinfo %+v", DiskInfo)
 	// без авторизации просто выдаются нули, ошибки нет
 	if v, ok := DiskInfo.System_folders["applications"].(string); ok {
-		if appconf.Conf.DirOnlyApp {
+		if DiskConf.DirOnlyApp {
 			// если права ограничены только каталогом этого приложения (разрешенным OAuthID), тут получим его
 			if err := сreateAppRoot(); err != nil {
 				return err
 			}
 		} else {
 			// раз ограничений нет, получим каталог с названием "Приложения"
-			DiskInfo.AppDirPath = v
+			DiskInfo.appRoot = v
 		}
 		//	log.Println("Путь к Приложениям:", v)
+	} else {
+		return fmt.Errorf("%s", "Не получить корневой диск приложения Yandex")
 	}
 
 	//	log.Printf("INFO2:%+v\n", DiskInfo)

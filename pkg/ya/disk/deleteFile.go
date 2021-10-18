@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
-	"github.com/ark-go/yandexapi/pkg/appconf"
 )
 
 func DeleteFile(pathfile string) error {
@@ -31,7 +29,7 @@ func DeleteFile(pathfile string) error {
 		return reqerr
 	}
 	req.Header.Set("Content-Type", "application/json") // "application/json; charset=utf-8"
-	req.Header.Add("Authorization", appconf.Conf.YaToken.AccessToken)
+	req.Header.Add("Authorization", *DiskConf.yaAccessToken)
 	resp, reserr := http.DefaultClient.Do(req)
 	if reserr != nil {
 		return reserr

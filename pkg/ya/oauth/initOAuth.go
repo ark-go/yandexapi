@@ -35,7 +35,10 @@ func init() {
 	YaToken = &SYaToken{}
 }
 
-func InitOAuth(force ...bool) error {
+// Запрос токена
+//	false - (без параметра) будет проверятся время истечения токена и его обновление за 30 дней
+//	true - безусловный запрос токена.
+func InitOAuth(force ...bool) (string, error) {
 	if YaToken.AppId == "" || YaToken.AppPass == "" {
 		log.Fatalln("Не указаны Application ID или пароль")
 	}
@@ -46,9 +49,17 @@ func InitOAuth(force ...bool) error {
 		fmt.Print("Введите полученный код:")
 		fmt.Scanf("%s\n", &kb)
 		YaToken.OAuthCode = kb
-		getToken()
+		token, err := getToken()
+		if err != nil {
+			return "", err
+		}
+		return token, nil
 	} else {
-		updateToken()
+		token, err := updateToken()
+		if err != nil {
+			return InitOAuth(true)
+		}
+		return token, nil
 	}
-	return nil
+
 }

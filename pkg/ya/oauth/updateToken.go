@@ -9,22 +9,20 @@ import (
 )
 
 // обновление токена по refresh токену
-func updateToken() {
+func updateToken() (string, error) {
 
 	if YaToken.RefreshToken == "" {
-		log.Println("Нет refresh-токена")
-		return
+		return "", fmt.Errorf("%s", "нет refresh-токена")
 	}
 	if YaToken.ExpiresIn != 0 {
 		d := time.Until(YaToken.StartDate) / time.Hour / 24
 		//		log.Println("Осталось дней:", int(d))
 		if int(d) > 35 {
-			log.Printf("OAuth закончится через: %d дней, обновление не требуется", int(d))
-			return
+			log.Printf("токен OAuth закончится через: %d дней, обновление не требуется", int(d))
+			return YaToken.AccessToken, nil
 		}
 	}
 
-	log.Println("refresh -", YaToken.RefreshToken)
 	data := url.Values{
 		"grant_type":    {"refresh_token"},      //refresh_token
 		"refresh_token": {YaToken.RefreshToken}, //код подтверждения
@@ -38,18 +36,19 @@ func updateToken() {
 	resp, err := http.PostForm("https://oauth.yandex.com/token", data)
 
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	jsonErr := json.NewDecoder(resp.Body).Decode(&YaToken)
 	resp.Body.Close()
 	//jsonErr := json.Unmarshal(resp.Body, &resToken)
 
 	if jsonErr != nil {
-		log.Fatal(jsonErr)
+		return "", jsonErr
 	}
 	YaToken.StartDate = time.Now().Add(time.Duration(YaToken.ExpiresIn) * time.Second)
 	YaToken.SaveConfig()
-	fmt.Printf("Обновление токена: %+v\n", YaToken)
+	fmt.Printf("Обновление токена: %+v\n", YaToken.AccessToken)
+	return YaToken.AccessToken, nil
 }
 
 /* update error

@@ -13,10 +13,10 @@ func getCode() {
 		log.Fatal(err)
 	}
 	queryString := u.Query()
-	queryString.Set("response_type", "code")          //code
-	queryString.Set("client_id", YaToken.AppId)       //идентификатор приложения
-	queryString.Set("device_id", YaToken.DeviceId)    //идентификатор устройства
-	queryString.Set("device_name", "moi test device") //имя устройства
+	queryString.Set("response_type", "code")            //code
+	queryString.Set("client_id", YaToken.AppId)         //идентификатор приложения
+	queryString.Set("device_id", YaToken.DeviceId)      //идентификатор устройства
+	queryString.Set("device_name", "ANI backup device") //имя этого устройства
 	//queryString.Set("redirect_uri", "1")              //адрес перенаправления
 	queryString.Set("login_hint", YaToken.UserName) //имя пользователя или электронный адрес
 	//queryString.Set("scope", "1")                     //запрашиваемые необходимые права

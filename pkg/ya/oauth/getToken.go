@@ -2,13 +2,14 @@ package oauth
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"time"
 )
 
 // получение токена по коду, который получит пользователь
-func getToken() {
+func getToken() (string, error) {
 	YaToken.Error = ""
 	YaToken.ErrorDescription = ""
 	data := url.Values{
@@ -21,23 +22,23 @@ func getToken() {
 
 	}
 	resp, err := http.PostForm("https://oauth.yandex.com/token", data)
-
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 	//	body, err := ioutil.ReadAll(r.Body) // []byte
 	jsonErr := json.NewDecoder(resp.Body).Decode(&YaToken)
 	resp.Body.Close()
 	if jsonErr != nil {
-		log.Fatal(jsonErr)
+		return "", jsonErr
 	}
 	// bad_verification_code  - при вводе не правильного кода
 	if YaToken.Error != "" {
 		log.Println("token error:", YaToken.Error)
+		return "", fmt.Errorf("%s", YaToken.Error)
 	}
 	YaToken.StartDate = time.Now().Add(time.Duration(YaToken.ExpiresIn) * time.Second)
 	YaToken.SaveConfig()
-
+	return YaToken.AccessToken, nil
 }
 
 /*

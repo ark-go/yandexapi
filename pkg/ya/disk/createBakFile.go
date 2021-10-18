@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
-	"github.com/ark-go/yandexapi/pkg/appconf"
 )
 
-func CreateBakFile(pathfile string) error {
+func createBakFile(pathfile string) error {
 	baseUrl := "https://cloud-api.yandex.net/v1/disk/"
 	relativeUrl := "resources/move"
 	u, err := url.Parse(relativeUrl)
@@ -31,7 +29,7 @@ func CreateBakFile(pathfile string) error {
 		return reqerr
 	}
 	req.Header.Set("Content-Type", "application/json") // "application/json; charset=utf-8"
-	req.Header.Add("Authorization", appconf.Conf.YaToken.AccessToken)
+	req.Header.Add("Authorization", *DiskConf.yaAccessToken)
 	resp, reserr := http.DefaultClient.Do(req)
 	if reserr != nil {
 		return reserr
@@ -47,17 +45,19 @@ func CreateBakFile(pathfile string) error {
 		case "DiskNotFoundError":
 			//log.Println("файла .bak не существует.")
 			return nil
-		case "DiskResourceAlreadyExistsError":
-			log.Println("Удаляем bak.")
-			DeleteFile(pathfile + ".bak")
-			return CreateBakFile(pathfile)
+		case "DiskResourceAlreadyExistsError": // если bak уже есть - удаляем и пробуеи снова
+			//log.Println("Удаляем bak.")
+			if err := DeleteFile(pathfile + ".bak"); err != nil {
+				return err
+			}
+			return createBakFile(pathfile)
 		case "DiskPathDoesntExistsError":
 			log.Println("Указанного пути не существует")
 		case "UnauthorizedError":
 			if err := InitAppDir(); err != nil {
 				return err
 			}
-			return CreateBakFile(pathfile)
+			return createBakFile(pathfile)
 		case "FieldValidationError":
 			// не заполнено обязательное поле
 		default:

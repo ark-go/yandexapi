@@ -19,11 +19,14 @@ var versionProg string
 func main() {
 
 	log.Println("Версия:", versionProg)
-
 	appconf.Conf.InitConfig()
 	//oauth.InitOAuth()
-	disk.InitAppDir()
-	if appconf.Conf.AppDirYandex != "" {
+
+	if err := disk.InitAppDir(); err != nil {
+		log.Println("ошибка:", err)
+	}
+
+	if appconf.Conf.Disk.IsAppDirYandex() { // не обязательная проверка, тест
 		g := []byte("Привет мир!")
 		disk.UploadByte("test.txt", g)
 		disk.UploadFile(`C:\Users\Zinaida\Pictures\2018-06-29 19.56.13.jpg`)

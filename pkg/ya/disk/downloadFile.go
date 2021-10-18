@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-
-	"github.com/ark-go/yandexapi/pkg/appconf"
 )
 
 func DownloadByte(fileName string, fileByte *[]byte) error {
@@ -44,7 +42,7 @@ func downloadFile(fileName string, filePath string, fileByte *[]byte) error {
 		//log.Fatal(reqerr)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Add("Authorization", appconf.Conf.YaToken.AccessToken)
+	req.Header.Add("Authorization", *DiskConf.yaAccessToken)
 	resp, reserr := http.DefaultClient.Do(req)
 	if reserr != nil {
 		return reserr
