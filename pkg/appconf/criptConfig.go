@@ -10,9 +10,19 @@ import (
 	"golang.org/x/crypto/scrypt"
 )
 
-func criptConfig(conf []byte) []byte {
+var kode []byte
 
-	secretKeyBytes, err := scrypt.Key([]byte("some password"), []byte("salt 798798"), 32768, 8, 1, 32)
+func init() {
+	if ser, err := diskSerial(); err != nil {
+		log.Println(err.Error())
+	} else {
+		kode = ser
+
+	}
+}
+
+func criptConfig(conf []byte) []byte {
+	secretKeyBytes, err := scrypt.Key(kode, []byte("salt 798798"), 32768, 8, 1, 32)
 	if err != nil {
 		log.Println("err:", err)
 	}
@@ -36,7 +46,7 @@ func criptConfig(conf []byte) []byte {
 
 func decriptConfig(encrypted []byte) []byte {
 
-	secretKeyBytes, err := scrypt.Key([]byte("some password"), []byte("salt 798798"), 32768, 8, 1, 32)
+	secretKeyBytes, err := scrypt.Key(kode, []byte("salt 798798"), 32768, 8, 1, 32)
 	if err != nil {
 		log.Println("err:", err)
 	}

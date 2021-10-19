@@ -47,7 +47,7 @@ func (c *conf) InitConfig() {
 	flag.StringVar(&Conf.YaToken.AppId, "AppId", Conf.YaToken.AppId, "Application ID")
 	flag.StringVar(&Conf.YaToken.AppPass, "AppPass", Conf.YaToken.AppPass, "Application Password")
 	flag.StringVar(&Conf.YaToken.UserName, "UserName", Conf.YaToken.UserName, "Имя или почта пользователя yandex.ru")
-	flag.StringVar(&Conf.YaToken.OAuthCode, "OAutCode", Conf.YaToken.OAuthCode, "Запрашивается приложением")
+	//	flag.StringVar(&Conf.YaToken.OAuthCode, "OAutCode", Conf.YaToken.OAuthCode, "Запрашивается приложением")
 	//	log.Println(">>>", Conf)
 	if Conf.YaToken.DeviceId == "" {
 		if ui, err := uuid.NewV4(); err != nil {
