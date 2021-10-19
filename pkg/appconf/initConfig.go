@@ -31,6 +31,7 @@ func init() {
 		fileConfigPath: filepath.Join(rootDir, "appconfig.cfg"),
 		YaToken:        oauth.YaToken,
 		Disk:           disk.DiskConf,
+		RootDir:        rootDir,
 	}
 	Conf.YaToken.SaveConfig = Conf.SaveConfig // мы хотим сами (в oauth) сохранять конфиг при получении нового токена
 	Conf.YaToken.Scope = "Раз Два Три"

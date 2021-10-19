@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 )
 
-func UploadByte(fileName string, buffer []byte) error {
-	buf := bytes.NewReader(buffer)
+func UploadByte(fileName string, buffer *[]byte) error {
+	buf := bytes.NewReader(*buffer)
 	return uploadFile(fileName, buf)
 }
 
