@@ -38,6 +38,7 @@ func (conf *conf) LoadConfig() error {
 	}
 	decr := decriptConfig(data)    // отправляем на расшифровку
 	data2 := bytes.NewReader(decr) // создаем bytes.Reader из []byte
+
 	//data2 := bytes.NewReader(data)
 	fz, err := gzip.NewReader(data2) // zip Reader распакуем при чтении
 	//fz, err := gzip.NewReader(fi)

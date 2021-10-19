@@ -1,10 +1,13 @@
 Чтение и запись файла на Yandex диск.
 Это все что умеем.
 
+Applicatio ID предоставляет доступ к API Yandex Disk, пользователь приложения должен будет разрешить, через Яндекс, доступ приложения к своему Yandex Disk. в данном примере доступ будет только к Disk:/Приложения/XXX XXX - название приложения указывается при регистрации (пункт 2)
+
 1. получить Applicatio ID https://oauth.yandex.com/client/new
-2. выбрать Platform WebService
-3. указать Calback https://oauth.yandex.com/verification_code
-4. выбрать Permissions
+2. ввести имя приложения (будет каталогом)
+3. выбрать Platform WebService
+4. указать Calback https://oauth.yandex.com/verification_code
+5. выбрать Permissions
    - Access to app folder in Yandex.Disk
    - Access to information about Yandex.Disk
 
