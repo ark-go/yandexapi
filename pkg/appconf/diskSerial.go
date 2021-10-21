@@ -17,7 +17,7 @@ func diskSerial() ([]byte, error) {
 	}
 	for _, disk := range block.Disks {
 		if disk.SerialNumber != "" {
-			return []byte(disk.SerialNumber + "1249863Yandex5632954"), nil
+			return []byte(disk.SerialNumber), nil
 		}
 	}
 	return nil, fmt.Errorf("%s", "не найдено ни одного серийника.")

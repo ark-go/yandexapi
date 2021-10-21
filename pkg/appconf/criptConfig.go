@@ -16,7 +16,7 @@ func init() {
 	if ser, err := diskSerial(); err != nil {
 		log.Println(err.Error())
 	} else {
-		kode = ser
+		kode = append(ser, "1249863Yandex5632954"...)
 
 	}
 }
